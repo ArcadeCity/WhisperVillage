@@ -12,5 +12,5 @@ Coordinating peer-to-peer support for Ukrainian refugees.
 
 ## Features
 - Trust-building via user video testimonials and/or linking social accounts
-- Allow connection of Bitcoin wallet for P2P
-  - Using "stealth transactions" via supertestnet's 'BIP47 minus determinism'?
+- Allow connection of Bitcoin wallet for peer-to-peer donations
+  - Using "stealth transactions" via @supertestnet's 'BIP47 minus determinism'?

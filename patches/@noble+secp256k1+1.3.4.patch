@@ -1,0 +1,35 @@
+diff --git a/node_modules/@noble/secp256k1/lib/index.js b/node_modules/@noble/secp256k1/lib/index.js
+index d0fc9d2..e134171 100644
+--- a/node_modules/@noble/secp256k1/lib/index.js
++++ b/node_modules/@noble/secp256k1/lib/index.js
+@@ -875,7 +875,8 @@ async function schnorrSign(msgHash, privateKey, auxRand = exports.utils.randomBy
+     const { n } = CURVE;
+     const m = ensureBytes(msgHash);
+     const d0 = normalizePrivateKey(privateKey);
+-    const rand = ensureBytes(auxRand);
++    const actualRand = await exports.utils.randomBytes()
++    const rand = ensureBytes(actualRand);
+     if (rand.length !== 32)
+         throw new TypeError('sign: Expected 32 bytes of aux randomness');
+     const P = Point.fromPrivateKey(d0);
+@@ -951,17 +952,9 @@ exports.utils = {
+         throw new Error('Valid private key was not found in 8 iterations. PRNG is broken');
+     },
+     sha256: async (message) => {
+-        if (crypto.web) {
+-            const buffer = await crypto.web.subtle.digest('SHA-256', message.buffer);
+-            return new Uint8Array(buffer);
+-        }
+-        else if (crypto.node) {
+-            const { createHash } = crypto.node;
+-            return Uint8Array.from(createHash('sha256').update(message).digest());
+-        }
+-        else {
+-            throw new Error("The environment doesn't have sha256 function");
+-        }
++      const createHash = require('create-hash')
++      const hash = Uint8Array.from(createHash('sha256').update(message).digest());
++      return hash
+     },
+     hmacSha256: async (key, ...messages) => {
+         if (crypto.web) {

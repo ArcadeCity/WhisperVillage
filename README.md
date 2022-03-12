@@ -14,3 +14,13 @@ Coordinating peer-to-peer support for Ukrainian refugees.
 - Trust-building via user video testimonials and/or linking social accounts
 - Allow connection of Bitcoin wallet for peer-to-peer donations
   - Using "stealth transactions" via @supertestnet's 'BIP47 minus determinism'?
+
+## Setup
+Use node v14
+
+```
+git clone git@github.com:ArcadeCity/whispervillage.git
+cd whispervillage
+yarn
+yarn start
+```

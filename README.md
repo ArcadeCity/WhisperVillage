@@ -19,7 +19,7 @@ Coordinating peer-to-peer support for Ukrainian refugees.
 Use node v14
 
 ```
-git clone git@github.com:ArcadeCity/whispervillage.git
+git clone https://github.com/ArcadeCity/whispervillage.git
 cd whispervillage
 yarn
 yarn start

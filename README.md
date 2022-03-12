@@ -1,8 +1,8 @@
 # Whisper Village
 
-[Satsby hackathon](https://www.thrillerbitcoin.com/satsx-hackathon-2022/) entry.
+Coordinating peer-to-peer support for Ukrainian refugees.
 
-Theme: Coordinating peer-to-peer support for Ukrainian refugees.
+[Satsby hackathon](https://www.thrillerbitcoin.com/satsx-hackathon-2022/) entry.
 
 ## Tech Stack
 - React Native via Expo

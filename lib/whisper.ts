@@ -6,39 +6,54 @@ import bip39 from './bip39'
 export const DEMO_PUBKEY_1 = '03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e' // linking
 export const DEMO_PUBKEY_2 = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e' // ephemeral
 
+export function generateEphemeralKeypair() {
+  console.log('Generating ephemeral keypair...')
+  return 'demoephkp'
+}
+
 export function sendtostealthaddress() {
-  var linkingpubkey = "03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e";
-  var ephemeralpubkey = "021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e";
-  var stealthpubkey = nobleSecp256k1.Point.fromHex( linkingpubkey ).add( nobleSecp256k1.Point.fromHex( ephemeralpubkey ) ).toHex();
-  var ecPair = bitcoinjs.ECPair.fromPublicKey( buffer.Buffer.from( stealthpubkey, "hex" ) );
-  var address = bitcoinjs.payments.p2wpkh({ pubkey: ecPair.publicKey, network: bitcoinjs.networks.testnet }).address;
-  console.log( "to address:", address );
+  var linkingpubkey = '03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e'
+  var ephemeralpubkey = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e'
+  var stealthpubkey = nobleSecp256k1.Point.fromHex(linkingpubkey)
+    .add(nobleSecp256k1.Point.fromHex(ephemeralpubkey))
+    .toHex()
+  var ecPair = bitcoinjs.ECPair.fromPublicKey(Buffer.from(stealthpubkey, 'hex'))
+  var address = bitcoinjs.payments.p2wpkh({
+    pubkey: ecPair.publicKey,
+    network: bitcoinjs.networks.testnet,
+  }).address
+  console.log('to address:', address)
 }
 
 export function sendfromstealthaddress() {
-  var linkingprivkey = "64c2a35ea7eb34f49f23ff42f7479e00613e01c3335acaaa5adf63aea41e81fc";
-  var whisperkey = "142037554249ad0daeae84ad02793921b8bf804fd47939a3d0ee5e1404849310";
-  var stealthprivkey = "78e2dab3ea34e2024dd283eff9c0d72219fd821307d4044e2bcdc1c2a8a3150c";
+  var linkingprivkey = '64c2a35ea7eb34f49f23ff42f7479e00613e01c3335acaaa5adf63aea41e81fc'
+  var whisperkey = '142037554249ad0daeae84ad02793921b8bf804fd47939a3d0ee5e1404849310'
+  var stealthprivkey = '78e2dab3ea34e2024dd283eff9c0d72219fd821307d4044e2bcdc1c2a8a3150c'
 
-  var senderPrivkeyWif = bitcoinjs.ECPair.fromPrivateKey( buffer.Buffer.from( stealthprivkey, "hex" ), { network: bitcoinjs.networks.testnet } ).toWIF();
+  var senderPrivkeyWif = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'), {
+    network: bitcoinjs.networks.testnet,
+  }).toWIF()
 
-  var inputtxid = "f14c1680b8477668d0cb8e191b6dc107c14b1eb5a4c7d41b3a253e22a066fc65";
-  var inputindex = 1;
+  var inputtxid = 'f14c1680b8477668d0cb8e191b6dc107c14b1eb5a4c7d41b3a253e22a066fc65'
+  var inputindex = 1
 
-  var ecPair = bitcoinjs.ECPair.fromPrivateKey( buffer.Buffer.from( stealthprivkey, "hex" ) );
+  var ecPair = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'))
 
-  var address = bitcoinjs.payments.p2wpkh({ pubkey: ecPair.publicKey, network: bitcoinjs.networks.testnet });
+  var address = bitcoinjs.payments.p2wpkh({
+    pubkey: ecPair.publicKey,
+    network: bitcoinjs.networks.testnet,
+  })
 
-  console.log( "from address:", address.address );
+  console.log('from address:', address.address)
 
-  var frompubkey = address.pubkey.toString('hex');
+  var frompubkey = address.pubkey.toString('hex')
 
-  var fromamount = 100000;
+  var fromamount = 100000
 
-  var to = "tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww";
-  var toamount = 99500;
+  var to = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
+  var toamount = 99500
 
-  sendCoins( senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount );
+  sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount)
 }
 
 export function logWalkthrough() {
@@ -136,7 +151,6 @@ export function getAddress(backupwords, path, index) {
   var root = node
   var child = root.derivePath(path)
   return computeAddress(child)
-
 }
 
 export function getPrivkeyHex(backupwords, path, index) {
@@ -157,36 +171,52 @@ export function getPubkey(backupwords, path, index) {
   return computePubkey(child)
 }
 
-export function computeWifPrivkey( node ) {
-  return bitcoinjs.ECPair.fromPrivateKey( node.privateKey, { network: bitcoinjs.networks.testnet } ).toWIF();
+export function computeWifPrivkey(node) {
+  return bitcoinjs.ECPair.fromPrivateKey(node.privateKey, {
+    network: bitcoinjs.networks.testnet,
+  }).toWIF()
 }
 
-export function getPrivkeyWif( backupwords, path, index ) {
-  var seed = bip39.mnemonicToSeedSync( backupwords );
-  var node = bip32.fromSeed( seed );
-  var path = "m/" + path + "/" + index;
-  var root = node;
-  var child = root.derivePath( path );
-  return computeWifPrivkey( child );
+export function getPrivkeyWif(backupwords, path, index) {
+  var seed = bip39.mnemonicToSeedSync(backupwords)
+  var node = bip32.fromSeed(seed)
+  path = 'm/' + path + '/' + index
+  var root = node
+  var child = root.derivePath(path)
+  return computeWifPrivkey(child)
 }
 
-export function sendCoins( senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount ) {
+export function sendCoins(
+  senderPrivkeyWif,
+  inputtxid,
+  inputindex,
+  frompubkey,
+  fromamount,
+  to,
+  toamount
+) {
   var psbt = new bitcoinjs.Psbt({ network: bitcoinjs.networks.testnet })
     .addInput({
       hash: inputtxid,
       index: inputindex,
       witnessUtxo: {
-        script: buffer.Buffer.from( '0014' + bitcoinjs.crypto.ripemd160( bitcoinjs.crypto.sha256( buffer.Buffer.from( frompubkey, "hex" ) ) ).toString( 'hex' ), 'hex' ),
+        script: Buffer.from(
+          '0014' +
+            bitcoinjs.crypto
+              .ripemd160(bitcoinjs.crypto.sha256(Buffer.from(frompubkey, 'hex')))
+              .toString('hex'),
+          'hex'
+        ),
         value: fromamount,
       },
     })
     .addOutput({
       address: to,
       value: toamount,
-    });
-    var keyPairSender = bitcoinjs.ECPair.fromWIF( senderPrivkeyWif, bitcoinjs.networks.testnet );
-    psbt.signInput(0, keyPairSender);
-    psbt.validateSignaturesOfInput(0);
-    psbt.finalizeAllInputs();
-    console.log( psbt.extractTransaction().toHex() );
+    })
+  var keyPairSender = bitcoinjs.ECPair.fromWIF(senderPrivkeyWif, bitcoinjs.networks.testnet)
+  psbt.signInput(0, keyPairSender)
+  psbt.validateSignaturesOfInput(0)
+  psbt.finalizeAllInputs()
+  console.log(psbt.extractTransaction().toHex())
 }

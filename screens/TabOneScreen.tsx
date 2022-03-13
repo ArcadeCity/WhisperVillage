@@ -2,17 +2,26 @@ import { useEffect, useRef, useState } from 'react'
 import { Button, ScrollView, StyleSheet } from 'react-native'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import { Text, View } from '../components/Themed'
-import { DEMO_PUBKEY_1, DEMO_PUBKEY_2, logWalkthrough } from '../lib/whisper'
+import {
+  DEMO_PUBKEY_1,
+  DEMO_PUBKEY_2,
+  generateEphemeralKeypair,
+  logWalkthrough,
+} from '../lib/whisper'
 import { RootTabScreenProps } from '../types'
 import { FeedConversation } from '../components/FeedConversation'
 import { images } from '../lib/images'
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+  const [ephKeypair, setEphKeypair] = useState<any>()
   useEffect(() => {
-    logWalkthrough()
+    const kp = generateEphemeralKeypair()
+    setEphKeypair(kp)
+    // logWalkthrough()
   }, [])
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.containerStyle}>
+      <Text style={{ marginBottom: 20 }}>{JSON.stringify(ephKeypair)}</Text>
       {/* <Text style={styles.title}>Send</Text>
       <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
       <Text style={{ marginBottom: 10 }}>Demo ephemeral pubkey:</Text>

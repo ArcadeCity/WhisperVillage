@@ -11,14 +11,18 @@ export const DEMO_PUBKEY_2 = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c
 
 export function deriveKeyFromMnemonic(mnemonic: string) {
   const seed = Buffer.from(mnemonicToSeedSync(mnemonic)).toString('hex')
+  // console.log('seed:', seed)
   let root = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
-  const rootPriv = root.derive(`m/44/0/`).privateKey as Uint8Array
+  const rootPriv = root.derive(`m/44'/60'/0'/0`).privateKey as Uint8Array
   const privBuffer = Buffer.from(rootPriv)
   const privateKey = new Uint8Array(privBuffer)
+  // console.log('root?', root)
+  // console.log('rootPriv?', rootPriv)
   return privateKey
 }
 
 export function getEphkey(path: number, indexnum: number = 0, backupwords: string) {
+  console.log('GETEPHKEY')
   if (getPrivkeyHex(backupwords, 0, indexnum).substring(0, 1) != '0') {
     let newindexnum = indexnum + 1
     return getEphkey(path, newindexnum, backupwords)
@@ -36,11 +40,6 @@ export function getEphkey(path: number, indexnum: number = 0, backupwords: strin
   }
 }
 
-export function generateEphemeralKeypair() {
-  console.log('Generating ephemeral keypair...')
-  return 'demoephkp'
-}
-
 export function sendtostealthaddress(linkingpubkey: string, ephemeralpubkey: string) {
   var stealthpubkey = nobleSecp256k1.Point.fromHex(linkingpubkey)
     .add(nobleSecp256k1.Point.fromHex(ephemeralpubkey))
@@ -50,7 +49,7 @@ export function sendtostealthaddress(linkingpubkey: string, ephemeralpubkey: str
     pubkey: ecPair.publicKey,
     network: bitcoinjs.networks.testnet,
   }).address
-  console.log('to address:', address)
+  // console.log('to address:', address)
   return address
 }
 
@@ -68,7 +67,11 @@ export function sendtostealthaddress_DEMO() {
   console.log('to address:', address)
 }
 
-export function sendfromstealthaddress(linkingprivkey: string, whisperkey: string) {
+export function sendfromstealthaddress(
+  linkingprivkey: string,
+  whisperkey: string,
+  withdrawTo: string
+) {
   var stealthprivkey = (
     (BigInt('0x' + linkingprivkey) + BigInt('0x' + whisperkey)) %
     BigInt('0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f')
@@ -94,10 +97,10 @@ export function sendfromstealthaddress(linkingprivkey: string, whisperkey: strin
 
   var fromamount = 100000
 
-  var to = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
+  var withdrawTo = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
   var toamount = 99500
 
-  sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount)
+  sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, withdrawTo, toamount)
 }
 
 export function sendfromstealthaddress_DEMO() {

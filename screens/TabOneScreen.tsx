@@ -32,7 +32,6 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
   }, [])
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.containerStyle}>
-      {/* <Text style={{ marginBottom: 20, color: 'black' }}>{JSON.stringify(ephKeypair)}</Text> */}
       {/* <Text style={styles.title}>Send</Text>
       <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
       <Text style={{ marginBottom: 10 }}>Demo ephemeral pubkey:</Text>
@@ -46,6 +45,13 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       {conversations.map((conversation) => {
         return <FeedConversation key={conversation.id} conversation={conversation} />
       })}
+      <Text style={{ marginBottom: 20, color: 'black' }}>
+        Ephemeral pubkey: {ephKeypair?.ephemeralpubkey ?? 'loading...'}
+      </Text>
+      <Text style={{ marginBottom: 40, color: 'black' }}>
+        Ephemeral privkey: {ephKeypair?.ephemeralprivkey ?? 'loading...'}
+      </Text>
+      {/* <Text style={{ marginBottom: 20, color: 'black' }}>{JSON.stringify(ephKeypair)}</Text> */}
     </ScrollView>
   )
 }

@@ -1,6 +1,6 @@
 # Whisper Village
 
-Coordinating peer-to-peer support for Ukrainian refugees.
+Quiet Peer-to-Peer Donations
 
 [Satsby hackathon](https://www.thrillerbitcoin.com/satsx-hackathon-2022/) entry.
 

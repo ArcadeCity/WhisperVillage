@@ -1,17 +1,60 @@
 import * as nobleSecp256k1 from '@noble/secp256k1'
 import * as bitcoinjs from './bitcoinjs-lib'
-import bip32 from './bip32'
+import * as bip32 from './bip32'
+// import * as bip32test from './bip32'
 import bip39 from './bip39'
+import { mnemonicToSeedSync } from '@scure/bip39'
+import { HDKey } from '@scure/bip32'
 
 export const DEMO_PUBKEY_1 = '03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e' // linking
 export const DEMO_PUBKEY_2 = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e' // ephemeral
+
+export function deriveKeyFromMnemonic(mnemonic: string) {
+  const seed = Buffer.from(mnemonicToSeedSync(mnemonic)).toString('hex')
+  let root = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
+  const rootPriv = root.derive(`m/44/0/`).privateKey as Uint8Array
+  const privBuffer = Buffer.from(rootPriv)
+  const privateKey = new Uint8Array(privBuffer)
+  return privateKey
+}
+
+export function getEphkey(path: number, indexnum: number = 0, backupwords: string) {
+  if (getPrivkeyHex(backupwords, 0, indexnum).substring(0, 1) != '0') {
+    let newindexnum = indexnum + 1
+    return getEphkey(path, newindexnum, backupwords)
+  } else {
+    var ephemeralprivkey = getPrivkeyHex(backupwords, 0, indexnum)
+    var ephemeralpubkey = bitcoinjs.ECPair.fromPrivateKey(
+      Buffer.from(getPrivkeyHex(backupwords, 0, indexnum), 'hex')
+    ).publicKey.toString('hex')
+    console.log('privkey:', ephemeralprivkey)
+    console.log('pubkey:', ephemeralpubkey)
+    return {
+      ephemeralprivkey,
+      ephemeralpubkey,
+    }
+  }
+}
 
 export function generateEphemeralKeypair() {
   console.log('Generating ephemeral keypair...')
   return 'demoephkp'
 }
 
-export function sendtostealthaddress() {
+export function sendtostealthaddress(linkingpubkey: string, ephemeralpubkey: string) {
+  var stealthpubkey = nobleSecp256k1.Point.fromHex(linkingpubkey)
+    .add(nobleSecp256k1.Point.fromHex(ephemeralpubkey))
+    .toHex()
+  var ecPair = bitcoinjs.ECPair.fromPublicKey(Buffer.from(stealthpubkey, 'hex'))
+  var address = bitcoinjs.payments.p2wpkh({
+    pubkey: ecPair.publicKey,
+    network: bitcoinjs.networks.testnet,
+  }).address
+  console.log('to address:', address)
+  return address
+}
+
+export function sendtostealthaddress_DEMO() {
   var linkingpubkey = '03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e'
   var ephemeralpubkey = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e'
   var stealthpubkey = nobleSecp256k1.Point.fromHex(linkingpubkey)
@@ -25,7 +68,39 @@ export function sendtostealthaddress() {
   console.log('to address:', address)
 }
 
-export function sendfromstealthaddress() {
+export function sendfromstealthaddress(linkingprivkey: string, whisperkey: string) {
+  var stealthprivkey = (
+    (BigInt('0x' + linkingprivkey) + BigInt('0x' + whisperkey)) %
+    BigInt('0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f')
+  ).toString(16)
+
+  var senderPrivkeyWif = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'), {
+    network: bitcoinjs.networks.testnet,
+  }).toWIF()
+
+  var inputtxid = 'f14c1680b8477668d0cb8e191b6dc107c14b1eb5a4c7d41b3a253e22a066fc65'
+  var inputindex = 1
+
+  var ecPair = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'))
+
+  var address = bitcoinjs.payments.p2wpkh({
+    pubkey: ecPair.publicKey,
+    network: bitcoinjs.networks.testnet,
+  })
+
+  console.log('from address:', address.address)
+
+  var frompubkey = address.pubkey.toString('hex')
+
+  var fromamount = 100000
+
+  var to = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
+  var toamount = 99500
+
+  sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount)
+}
+
+export function sendfromstealthaddress_DEMO() {
   var linkingprivkey = '64c2a35ea7eb34f49f23ff42f7479e00613e01c3335acaaa5adf63aea41e81fc'
   var whisperkey = '142037554249ad0daeae84ad02793921b8bf804fd47939a3d0ee5e1404849310'
   var stealthprivkey = '78e2dab3ea34e2024dd283eff9c0d72219fd821307d4044e2bcdc1c2a8a3150c'
@@ -154,8 +229,8 @@ export function getAddress(backupwords, path, index) {
 }
 
 export function getPrivkeyHex(backupwords, path, index) {
-  var seed = bip39.mnemonicToSeedSync(backupwords)
-  var node = bip32.fromSeed(seed)
+  var seed = mnemonicToSeedSync(backupwords)
+  var node = bip32.fromSeed(Buffer.from(seed))
   path = 'm/' + path + '/' + index
   var root = node
   var child = root.derivePath(path)

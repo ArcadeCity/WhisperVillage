@@ -114,7 +114,7 @@ export const FeedConversation = ({
         )}
 
         <Text style={{ paddingHorizontal: 20, marginTop: 15, fontSize: 15, lineHeight: 22 }}>
-          {conversation.content}
+          Stealth address: {conversation.stealthAddress}
         </Text>
 
         {conversation.link && (

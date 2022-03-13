@@ -1,11 +1,24 @@
 import { useState } from 'react'
 import { Button, SafeAreaView, StyleSheet, TextInput } from 'react-native'
+import * as bitcoinjs from '../lib/bitcoinjs-lib'
 import { Text, View } from '../components/Themed'
+import { deriveKeyFromMnemonic } from '../lib/whisper'
 
 export default function TabTwoScreen() {
   const [seedPhrase, onChangeSeedPhrase] = useState('')
   const [whisperKey, onChangeWhisperKey] = useState('')
   const [withdrawAddress, onChangeWithdrawAddress] = useState('')
+  const pressedSubmit = () => {
+    console.log({ seedPhrase, whisperKey, withdrawAddress })
+
+    // Derive the linking privkey from the seed phrase
+    const linkingPrivkey = deriveKeyFromMnemonic(seedPhrase)
+    console.log('Derived linking privkey:', linkingPrivkey)
+
+    // var senderPrivkeyWif = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(whisperKey, 'hex'), {
+    //   network: bitcoinjs.networks.testnet,
+    // }).toWIF()
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Receive</Text>
@@ -36,7 +49,7 @@ export default function TabTwoScreen() {
             marginHorizontal: 50,
           }}
         >
-          <Button title='Submit' onPress={() => console.log('Submit pressed')} />
+          <Button title='Submit' onPress={pressedSubmit} />
         </View>
       </SafeAreaView>
     </View>

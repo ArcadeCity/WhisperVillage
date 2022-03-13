@@ -6,22 +6,33 @@ import {
   DEMO_PUBKEY_1,
   DEMO_PUBKEY_2,
   generateEphemeralKeypair,
+  getEphkey,
   logWalkthrough,
+  sendtostealthaddress,
 } from '../lib/whisper'
 import { RootTabScreenProps } from '../types'
 import { FeedConversation } from '../components/FeedConversation'
 import { images } from '../lib/images'
+import { generateMnemonic } from '@scure/bip39'
+import { wordlist } from '@scure/bip39/wordlists/english'
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   const [ephKeypair, setEphKeypair] = useState<any>()
   useEffect(() => {
-    const kp = generateEphemeralKeypair()
+    const mnemonic = generateMnemonic(wordlist)
+    const kp = getEphkey(44, 0, mnemonic)
+    console.log(kp)
     setEphKeypair(kp)
+    conversations.forEach((conversation) => {
+      const addr = sendtostealthaddress(conversation.linkingKey, kp.ephemeralpubkey)
+      conversation.stealthAddress = addr
+      console.log(conversation)
+    })
     // logWalkthrough()
   }, [])
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.containerStyle}>
-      <Text style={{ marginBottom: 20 }}>{JSON.stringify(ephKeypair)}</Text>
+      {/* <Text style={{ marginBottom: 20, color: 'black' }}>{JSON.stringify(ephKeypair)}</Text> */}
       {/* <Text style={styles.title}>Send</Text>
       <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
       <Text style={{ marginBottom: 10 }}>Demo ephemeral pubkey:</Text>
@@ -49,6 +60,8 @@ const conversations: any[] = [
     picture: images.computer,
     userPicture: images.computer,
     communityPhoto: images.comm1,
+    linkingKey: DEMO_PUBKEY_1,
+    stealthAddress: null,
   },
   {
     id: 'isaodjfw8h42342342oifh8',
@@ -59,6 +72,8 @@ const conversations: any[] = [
     picture: images.computer,
     userPicture: images.computer,
     communityPhoto: images.comm1,
+    linkingKey: DEMO_PUBKEY_1,
+    stealthAddress: null,
   },
 ]
 

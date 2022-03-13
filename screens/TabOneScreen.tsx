@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { Button, StyleSheet } from 'react-native'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import { Text, View } from '../components/Themed'
-import { logWalkthrough } from '../lib/whisper'
+import { DEMO_PUBKEY_1, DEMO_PUBKEY_2, logWalkthrough } from '../lib/whisper'
 import { RootTabScreenProps } from '../types'
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
-  const video = useRef(null)
-  const [status, setStatus] = useState({})
   useEffect(() => {
     logWalkthrough()
   }, [])
@@ -15,26 +13,14 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
     <View style={styles.container}>
       <Text style={styles.title}>Send</Text>
       <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
-      <Text style={{ marginBottom: 20 }}>Here imagine a list of potential recipients</Text>
-      {/* <Video
-        ref={video}
-        style={styles.video}
-        source={{
-          uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-        }}
-        useNativeControls
-        resizeMode='contain'
-        isLooping
-        onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-      />
-      <View style={styles.buttons}>
-        <Button
-          title={status.isPlaying ? 'Pause' : 'Play'}
-          onPress={() =>
-            status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
-          }
-        />
-      </View> */}
+      <Text style={{ marginBottom: 10 }}>Demo ephemeral pubkey:</Text>
+      <Text style={{ marginBottom: 20 }}>{DEMO_PUBKEY_2}</Text>
+      <View style={{ backgroundColor: '#333', padding: 20, borderRadius: 10 }}>
+        <Text style={{ marginBottom: 30, fontSize: 20 }}>Alice</Text>
+        <Text style={{ marginBottom: 5 }}>Linking key:</Text>
+        <Text>{DEMO_PUBKEY_1}</Text>
+        <Button title='Generate stealth address' onPress={() => console.log('ehehehe')} />
+      </View>
     </View>
   )
 }

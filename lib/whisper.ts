@@ -8,6 +8,9 @@ export const DEMO_PUBKEY_2 = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c
 
 export function logWalkthrough() {
   console.log(
+    'testing if I can add stuff to github'
+  )
+  console.log(
     'The payer starts off with a "linking pubkey" created by the recipient a long time ago and displayed on a website somewhere.'
   )
   var pubkey1 = DEMO_PUBKEY_1

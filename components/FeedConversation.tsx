@@ -113,7 +113,7 @@ export const FeedConversation = ({
           <ImagePlaceholder size={[400, 230]} />
         )}
 
-        <Text style={{ paddingHorizontal: 20, marginTop: 15, fontSize: 17, lineHeight: 22 }}>
+        <Text style={{ paddingHorizontal: 20, marginTop: 15, fontSize: 15, lineHeight: 22 }}>
           {conversation.content}
         </Text>
 

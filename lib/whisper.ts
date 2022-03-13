@@ -1,5 +1,5 @@
 import * as nobleSecp256k1 from '@noble/secp256k1'
-import bitcoinjs from './bitcoinjs-lib'
+import * as bitcoinjs from './bitcoinjs-lib'
 import bip32 from './bip32'
 import bip39 from './bip39'
 
@@ -21,14 +21,23 @@ export function logWalkthrough() {
     'The payer’s browser combines his ephemeral pubkey with the linking pubkey to generate the stealth address.'
   )
   console.log('What the payer knows about the stealth address:')
+
   var stealthaddress = nobleSecp256k1.Point.fromHex(pubkey1)
     .add(nobleSecp256k1.Point.fromHex(pubkey2))
-    .toHexX()
-  console.log(
-    'public key:',
-    nobleSecp256k1.Point.fromHex(pubkey1).add(nobleSecp256k1.Point.fromHex(pubkey2)).toHexX()
-  )
+    .toHex() // CHANGED FROM toHexX
+  console.log('public key:', stealthaddress)
   console.log('private key: unknown')
+
+  const buff = Buffer.from(stealthaddress, 'hex')
+  console.log('buff:', buff)
+  const ecPair = bitcoinjs.ECPair.fromPublicKey(buff)
+  console.log('pair:', ecPair)
+  var address = bitcoinjs.payments.p2wpkh({
+    pubkey: ecPair.publicKey,
+    network: bitcoinjs.networks.mainnet,
+  }).address
+  console.log('ADDRESS:', address)
+
   console.log(
     "Basically there's a math equation going on here:\n",
     pubkey1,
@@ -81,21 +90,21 @@ export function computePubkey(node: any) {
   return node.publicKey.toString('hex')
 }
 
-export function computePrivkey(node: any) {
-  return bitcoinjs.ECPair.fromPrivateKey(node.privateKey, {
-    network: bitcoinjs.networks.testnet,
-  }).toWIF()
-}
+// export function computePrivkey(node: any) {
+//   return bitcoinjs.ECPair.fromPrivateKey(node.privateKey, {
+//     network: bitcoinjs.networks.testnet,
+//   }).toWIF()
+// }
 
 export function computePrivkeyHex(node: any) {
   return node.privateKey.toString('hex')
 }
 
-export function toHexString(byteArray) {
-  return Array.from(byteArray, function (byte) {
-    return ('0' + (byte & 0xff).toString(16)).slice(-2)
-  }).join('')
-}
+// export function toHexString(byteArray) {
+//   return Array.from(byteArray, function (byte) {
+//     return ('0' + (byte & 0xff).toString(16)).slice(-2)
+//   }).join('')
+// }
 
 export function getAddress(backupwords, path, index) {
   var seed = bip39.mnemonicToSeedSync(backupwords)
@@ -112,14 +121,14 @@ export function getAddress(backupwords, path, index) {
   // console.log( computeAddress( child1b ) );
 }
 
-export function getPrivkey(backupwords, path, index) {
-  var seed = bip39.mnemonicToSeedSync(backupwords)
-  var node = bip32.fromSeed(seed)
-  path = 'm/' + path + '/' + index
-  var root = node
-  var child = root.derivePath(path)
-  return computePrivkey(child)
-}
+// export function getPrivkey(backupwords, path, index) {
+//   var seed = bip39.mnemonicToSeedSync(backupwords)
+//   var node = bip32.fromSeed(seed)
+//   path = 'm/' + path + '/' + index
+//   var root = node
+//   var child = root.derivePath(path)
+//   return computePrivkey(child)
+// }
 
 export function getPrivkeyHex(backupwords, path, index) {
   var seed = bip39.mnemonicToSeedSync(backupwords)

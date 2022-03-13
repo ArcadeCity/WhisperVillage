@@ -8,13 +8,14 @@ import { wordlist } from '@scure/bip39/wordlists/english'
 
 export default function TabTwoScreen() {
   const [privateKey, onChangePrivateKey] = useState(
-    '0267cc8d461861f62e356c3cd93cfdb89c0ff48fd0da8364b17e157a40971499'
+    '64c2a35ea7eb34f49f23ff42f7479e00613e01c3335acaaa5adf63aea41e81fc'
+    // '0267cc8d461861f62e356c3cd93cfdb89c0ff48fd0da8364b17e157a40971499'
   )
   // const [seedPhrase, onChangeSeedPhrase] = useState(
   //   'reward salt predict beef cabin ignore rib fever skill genre pelican oval'
   // )
   const [whisperKey, onChangeWhisperKey] = useState(
-    '0f73121b5ca2fddbb29dbcaf1551d783345207520b31fa5288102d357c9c0451'
+    '0eb827cdd4799494512fd4f8b414f39c6ad729f04504abe56bfc48120db1f157'
   )
   const [withdrawAddress, onChangeWithdrawAddress] = useState('mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt')
   const pressedSubmit = () => {

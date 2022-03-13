@@ -87,6 +87,10 @@ export async function sendfromstealthaddress(
   console.log('?:', stealthaddr)
 
   var inputtxid = await getIdOfTxThatSentMeMoneyAsync(stealthaddr)
+  if (inputtxid === false) {
+    console.log('try again later')
+    return
+  }
   console.log('THE ID IS:', inputtxid)
   var inputindex = await getOutputNumberOfTxThatSentMeMoneyAsync(stealthaddr, inputtxid)
   console.log('THE INDEX IS:', inputindex)
@@ -102,7 +106,7 @@ export async function sendfromstealthaddress(
 
   var frompubkey = address.pubkey.toString('hex')
 
-  const fromamount = await getAmountOfTxThatSentMeMoneyAsync(stealthaddr, id)
+  const fromamount = await getAmountOfTxThatSentMeMoneyAsync(stealthaddr, inputtxid)
   console.log('from amount:', fromamount)
   const toamount = fromamount - 500
   console.log('to amount:', toamount)
@@ -303,7 +307,9 @@ export function sendCoins(
   psbt.signInput(0, keyPairSender)
   psbt.validateSignaturesOfInput(0)
   psbt.finalizeAllInputs()
-  console.log(psbt.extractTransaction().toHex())
+  const msg = 'Transaction: ' + psbt.extractTransaction().toHex()
+  console.log(msg)
+  alert(msg)
 }
 
 async function getIdOfTxThatSentMeMoneyAsync(stealthaddress) {
@@ -313,8 +319,12 @@ async function getIdOfTxThatSentMeMoneyAsync(stealthaddress) {
     const response = await fetch(url)
     const json = await response.json()
     console.log('RESPONSE:', json)
-    if (!json.txrefs) {
+    if (!json.txrefs && !json.unconfirmed_txrefs) {
       alert('That address has no transactions')
+      return false
+    } else if (!!json.unconfirmed_txrefs) {
+      alert('Address has unconfirmed transactions - try again in a few minutes')
+      return false
     } else {
       length = json['txrefs'].length
       var txid = json['txrefs'][length - 1]['tx_hash']

@@ -18,7 +18,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
         ref={video}
         style={styles.video}
         source={{
-          uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+          uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
         }}
         useNativeControls
         resizeMode='contain'

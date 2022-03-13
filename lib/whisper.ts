@@ -67,9 +67,9 @@ export function sendtostealthaddress_DEMO() {
   console.log('to address:', address)
 }
 
-export function sendfromstealthaddress(
+export async function sendfromstealthaddress(
   linkingprivkey: string,
-  whisperkey: string,
+  whisperkey: string, // ephem pubkey
   withdrawTo: string
 ) {
   var stealthprivkey = (
@@ -81,8 +81,15 @@ export function sendfromstealthaddress(
     network: bitcoinjs.networks.testnet,
   }).toWIF()
 
-  var inputtxid = 'f14c1680b8477668d0cb8e191b6dc107c14b1eb5a4c7d41b3a253e22a066fc65'
-  var inputindex = 1
+  const pubkey = getPubkeyFromPrivkey(linkingprivkey)
+  const ephpubkey = getPubkeyFromPrivkey(whisperkey)
+  const stealthaddr = sendtostealthaddress(pubkey, ephpubkey)
+  console.log('?:', stealthaddr)
+
+  var inputtxid = await getIdOfTxThatSentMeMoneyAsync(stealthaddr)
+  console.log('THE ID IS:', inputtxid)
+  var inputindex = await getOutputNumberOfTxThatSentMeMoneyAsync(stealthaddr, inputtxid)
+  console.log('THE INDEX IS:', inputindex)
 
   var ecPair = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'))
 
@@ -95,44 +102,44 @@ export function sendfromstealthaddress(
 
   var frompubkey = address.pubkey.toString('hex')
 
-  var fromamount = 100000
-
-  var withdrawTo = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
-  var toamount = 99500
+  const fromamount = await getAmountOfTxThatSentMeMoneyAsync(stealthaddr, id)
+  console.log('from amount:', fromamount)
+  const toamount = fromamount - 500
+  console.log('to amount:', toamount)
 
   sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, withdrawTo, toamount)
 }
 
-export function sendfromstealthaddress_DEMO() {
-  var linkingprivkey = '64c2a35ea7eb34f49f23ff42f7479e00613e01c3335acaaa5adf63aea41e81fc'
-  var whisperkey = '142037554249ad0daeae84ad02793921b8bf804fd47939a3d0ee5e1404849310'
-  var stealthprivkey = '78e2dab3ea34e2024dd283eff9c0d72219fd821307d4044e2bcdc1c2a8a3150c'
+// export function sendfromstealthaddress_DEMO() {
+//   var linkingprivkey = '64c2a35ea7eb34f49f23ff42f7479e00613e01c3335acaaa5adf63aea41e81fc'
+//   var whisperkey = '142037554249ad0daeae84ad02793921b8bf804fd47939a3d0ee5e1404849310'
+//   var stealthprivkey = '78e2dab3ea34e2024dd283eff9c0d72219fd821307d4044e2bcdc1c2a8a3150c'
 
-  var senderPrivkeyWif = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'), {
-    network: bitcoinjs.networks.testnet,
-  }).toWIF()
+//   var senderPrivkeyWif = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'), {
+//     network: bitcoinjs.networks.testnet,
+//   }).toWIF()
 
-  var inputtxid = 'f14c1680b8477668d0cb8e191b6dc107c14b1eb5a4c7d41b3a253e22a066fc65'
-  var inputindex = 1
+//   var inputtxid = 'f14c1680b8477668d0cb8e191b6dc107c14b1eb5a4c7d41b3a253e22a066fc65'
+//   var inputindex = 1
 
-  var ecPair = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'))
+//   var ecPair = bitcoinjs.ECPair.fromPrivateKey(Buffer.from(stealthprivkey, 'hex'))
 
-  var address = bitcoinjs.payments.p2wpkh({
-    pubkey: ecPair.publicKey,
-    network: bitcoinjs.networks.testnet,
-  })
+//   var address = bitcoinjs.payments.p2wpkh({
+//     pubkey: ecPair.publicKey,
+//     network: bitcoinjs.networks.testnet,
+//   })
 
-  console.log('from address:', address.address)
+//   console.log('from address:', address.address)
 
-  var frompubkey = address.pubkey.toString('hex')
+//   var frompubkey = address.pubkey.toString('hex')
 
-  var fromamount = 100000
+//   var fromamount = 100000
 
-  var to = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
-  var toamount = 99500
+//   var to = 'tb1q3gxjr9ey7k526kq2nvhnanuh4k9k7hyt04h7x6wyzve0kghsnrksjg67ww'
+//   var toamount = 99500
 
-  sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount)
-}
+//   sendCoins(senderPrivkeyWif, inputtxid, inputindex, frompubkey, fromamount, to, toamount)
+// }
 
 export function logWalkthrough() {
   console.log(
@@ -202,7 +209,7 @@ export function logWalkthrough() {
   console.log(
     "So here's what the recipient knows about the stealth address once he receives the ephemeral private key:"
   )
-  console.log('public key:', nobleSecp256k1.Point.fromPrivateKey(privkey3).toHexX())
+  console.log('public key:', nobleSecp256k1.Point.fromPrivateKey(privkey3).toHexX()) // should be toHex too?
   console.log('private key:', privkey3)
   console.log(
     "The recipient uses the stealth address's private key to move the bitcoins out of the stealth address at his discretion and is careful not to mix those bitcoins with his other bitcoins without a coinjoin."
@@ -298,3 +305,133 @@ export function sendCoins(
   psbt.finalizeAllInputs()
   console.log(psbt.extractTransaction().toHex())
 }
+
+async function getIdOfTxThatSentMeMoneyAsync(stealthaddress) {
+  try {
+    const url = 'https://api.blockcypher.com/v1/btc/test3/addrs/' + stealthaddress
+    console.log(url)
+    const response = await fetch(url)
+    const json = await response.json()
+    console.log('RESPONSE:', json)
+    if (!json.txrefs) {
+      alert('That address has no transactions')
+    } else {
+      length = json['txrefs'].length
+      var txid = json['txrefs'][length - 1]['tx_hash']
+      sessionStorage['txid'] = txid
+      console.log('transaction id:', txid)
+      return txid
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export async function getOutputNumberOfTxThatSentMeMoneyAsync(
+  stealthaddress: string,
+  txid: string
+) {
+  try {
+    const url = 'https://api.blockcypher.com/v1/btc/test3/txs/' + txid
+    console.log(url)
+    const response = await fetch(url)
+    const json = await response.json()
+    console.log('RESPONSE:', json)
+    var i
+    for (i = 0; i < json['outputs'].length; i++) {
+      var j
+      for (j = 0; j < json['outputs'][i]['addresses'].length; j++) {
+        if (stealthaddress == json['outputs'][i]['addresses'][j]) {
+          console.log('output number:', i)
+          return i
+        }
+      }
+    }
+  } catch (e) {}
+}
+
+async function getAmountOfTxThatSentMeMoneyAsync(stealthaddress: string, txid: string) {
+  try {
+    const url = 'https://api.blockcypher.com/v1/btc/test3/txs/' + txid
+    console.log(url)
+    const response = await fetch(url)
+    const json = await response.json()
+    console.log('RESPONSE:', json)
+    var i
+    for (i = 0; i < json['outputs'].length; i++) {
+      var j
+      for (j = 0; j < json['outputs'][i]['addresses'].length; j++) {
+        if (stealthaddress == json['outputs'][i]['addresses'][j]) {
+          console.log('amount', json['outputs'][i]['value'])
+          return json['outputs'][i]['value']
+        }
+      }
+    }
+  } catch (e) {}
+}
+
+function getPubkeyFromPrivkey(privkey) {
+  return bitcoinjs.ECPair.fromPrivateKey(
+    Buffer.from(privkey, 'hex'),
+    bitcoinjs.networks.testnet
+  ).publicKey.toString('hex')
+}
+
+// async function getAmountOfTxThatSentMeMoney() {
+
+// }
+
+// export function getOutputNumberOfTxThatSentMeMoney(stealthaddress, txid) {
+//   var xhttp = new XMLHttpRequest()
+//   xhttp.onreadystatechange = function () {
+//     if (this.readyState == 4 && this.status == 200) {
+//       var json = JSON.parse(xhttp.responseText)
+//       var i
+//       for (i = 0; i < json['outputs'].length; i++) {
+//         var j
+//         for (j = 0; j < json['outputs'][i]['addresses'].length; j++) {
+//           if (stealthaddress == json['outputs'][i]['addresses'][j]) {
+//             console.log('output number:', i)
+//           }
+//         }
+//       }
+//     }
+//   }
+//   xhttp.open('GET', 'https://api.blockcypher.com/v1/btc/test3/txs/' + txid, true)
+//   xhttp.send()
+// }
+
+// function getAmountOfTxThatSentMeMoney(stealthaddress, txid) {
+//   var xhttp = new XMLHttpRequest()
+//   xhttp.onreadystatechange = function () {
+//     if (this.readyState == 4 && this.status == 200) {
+//       var json = JSON.parse(xhttp.responseText)
+//       var i
+//       for (i = 0; i < json['outputs'].length; i++) {
+//         var j
+//         for (j = 0; j < json['outputs'][i]['addresses'].length; j++) {
+//           if (stealthaddress == json['outputs'][i]['addresses'][j]) {
+//             console.log('amount', json['outputs'][i]['value'])
+//           }
+//         }
+//       }
+//     }
+//   }
+//   xhttp.open('GET', 'https://api.blockcypher.com/v1/btc/test3/txs/' + txid, true)
+//   xhttp.send()
+// }
+
+// export function getIdOfTxThatSentMeMoney(stealthaddress) {
+//   var xhttp = new XMLHttpRequest()
+//   xhttp.onreadystatechange = function () {
+//     if (this.readyState == 4 && this.status == 200) {
+//       var json = JSON.parse(xhttp.responseText)
+//       length = json['txrefs'].length
+//       var txid = json['txrefs'][length - 1]['tx_hash']
+//       sessionStorage['txid'] = txid
+//       console.log('transaction id:', txid)
+//     }
+//   }
+//   xhttp.open('GET', 'https://api.blockcypher.com/v1/btc/test3/addrs/' + stealthaddress, true)
+//   xhttp.send()
+// }

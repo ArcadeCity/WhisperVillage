@@ -1,15 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
-import { Button, ScrollView, StyleSheet } from 'react-native'
-import { Video, AVPlaybackStatus } from 'expo-av'
-import { Text, View } from '../components/Themed'
-import {
-  DEMO_PUBKEY_1,
-  DEMO_PUBKEY_2,
-  generateEphemeralKeypair,
-  getEphkey,
-  logWalkthrough,
-  sendtostealthaddress,
-} from '../lib/whisper'
+import { useEffect, useState } from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+import { Text } from '../components/Themed'
+import { DEMO_PUBKEY_1, getEphkey, sendtostealthaddress } from '../lib/whisper'
 import { RootTabScreenProps } from '../types'
 import { FeedConversation } from '../components/FeedConversation'
 import { images } from '../lib/images'
@@ -59,26 +51,26 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 const conversations: any[] = [
   {
     id: 'isaodjfw8h42oifh8',
-    content: `Linking key: ${DEMO_PUBKEY_1}`,
+    // content: `Linking key: ${DEMO_PUBKEY_1}`,
     username: 'Alice',
     communityName: 'Poland Helpers',
     time: '1d',
-    picture: images.computer,
-    userPicture: images.computer,
+    picture: images.refugee,
+    userPicture: images.refugee,
     communityPhoto: images.comm1,
     linkingKey: DEMO_PUBKEY_1,
     stealthAddress: null,
   },
   {
     id: 'isaodjfw8h42342342oifh8',
-    content: `Linking key: ${DEMO_PUBKEY_1}`,
+    // content: `Linking key: ${DEMO_PUBKEY_1}`,
     username: 'Bob',
     communityName: 'Ottawa Trucker',
     time: '1d',
-    picture: images.computer,
-    userPicture: images.computer,
+    picture: images.trucker,
+    userPicture: images.trucker,
     communityPhoto: images.comm1,
-    linkingKey: DEMO_PUBKEY_1,
+    linkingKey: '021fe59f57418f6e7928defcf44897e69739d67919e41b1b75c41324d90b8d9cbf',
     stealthAddress: null,
   },
 ]

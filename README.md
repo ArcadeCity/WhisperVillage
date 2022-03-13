@@ -7,8 +7,9 @@ Quiet Peer-to-Peer Donations
 ## Tech Stack
 - React Native via Expo
   - Allows web and mobile (Android & iOS) via single codebase
-- Backend: Go?
-  - Reuse open-source [v2 Zion relay](https://github.com/getzion/relay)?
+- Backend:
+  - For hackathon, no backend - just demo data with stealth address stuff done client-side
+  - After hackathon, can use the [v2 Zion relay](https://github.com/getzion/relay) for social features
 
 ## Features
 - Trust-building via user video testimonials and/or linking social accounts

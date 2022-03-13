@@ -1,19 +1,38 @@
-import { useEffect } from 'react'
-import { StyleSheet } from 'react-native'
-import EditScreenInfo from '../components/EditScreenInfo'
+import { useEffect, useRef, useState } from 'react'
+import { Button, StyleSheet } from 'react-native'
+import { Video, AVPlaybackStatus } from 'expo-av'
 import { Text, View } from '../components/Themed'
 import { logWalkthrough } from '../lib/stealth'
 import { RootTabScreenProps } from '../types'
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+  const video = useRef(null)
+  const [status, setStatus] = useState({})
   useEffect(() => {
     logWalkthrough()
   }, [])
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
-      <EditScreenInfo path='/screens/TabOneScreen.tsx' />
+      <Text style={styles.title}>Video Test</Text>
+      <Video
+        ref={video}
+        style={styles.video}
+        source={{
+          uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+        }}
+        useNativeControls
+        resizeMode='contain'
+        isLooping
+        onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+      />
+      <View style={styles.buttons}>
+        <Button
+          title={status.isPlaying ? 'Pause' : 'Play'}
+          onPress={() =>
+            status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
+          }
+        />
+      </View>
     </View>
   )
 }
@@ -27,10 +46,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 20,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  video: {
+    alignSelf: 'center',
+    width: 320,
+    height: 200,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

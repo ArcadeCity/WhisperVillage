@@ -3,13 +3,16 @@ import bitcoinjs from './bitcoinjs-lib'
 import bip32 from './bip32'
 import bip39 from './bip39'
 
+export const DEMO_PUBKEY_1 = '03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e' // linking
+export const DEMO_PUBKEY_2 = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e' // ephemeral
+
 export function logWalkthrough() {
   console.log(
     'The payer starts off with a "linking pubkey" created by the recipient a long time ago and displayed on a website somewhere.'
   )
-  var pubkey1 = '03446801102d378f09aa200debc1acdff0f6fcf1c6d9bc1e2c7e14076d5fbc740e'
+  var pubkey1 = DEMO_PUBKEY_1
   console.log('In this case, the linking pubkey is', pubkey1)
-  var pubkey2 = '021bdff9549d3aec645cd57499648b4eda06fd0a426048857c0c456c73500e128e'
+  var pubkey2 = DEMO_PUBKEY_2
   console.log(
     'The payer also has an ephemeral private/public keypair created by the payer’s browser when he loaded the website.'
   )

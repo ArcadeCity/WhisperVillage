@@ -4,6 +4,8 @@ import { Video, AVPlaybackStatus } from 'expo-av'
 import { Text, View } from '../components/Themed'
 import { DEMO_PUBKEY_1, DEMO_PUBKEY_2, logWalkthrough } from '../lib/whisper'
 import { RootTabScreenProps } from '../types'
+import { FeedConversation } from '../components/FeedConversation'
+import { images } from '../lib/images'
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   useEffect(() => {
@@ -21,9 +23,25 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
         <Text>{DEMO_PUBKEY_1}</Text>
         <Button title='Generate stealth address' onPress={() => console.log('ehehehe')} />
       </View>
+      {conversations.map((conversation) => {
+        return <FeedConversation key={conversation.id} conversation={conversation} />
+      })}
     </View>
   )
 }
+
+const conversations: any[] = [
+  {
+    id: 'isaodjfw8h42oifh8',
+    content: 'Vexillologist sartorial vaporware, gochujang fam chambray kickstarter.',
+    username: 'chris',
+    communityName: 'Rad Devs of Austin',
+    time: '1d',
+    picture: images.computer,
+    userPicture: images.computer,
+    communityPhoto: images.comm1,
+  },
+]
 
 const styles = StyleSheet.create({
   container: {

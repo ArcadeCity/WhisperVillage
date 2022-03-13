@@ -22,7 +22,6 @@
     "@react-navigation/native-stack": "^6.1.0",
     "@scure/bip32": "1.0.1",
     "@scure/bip39": "1.0.0",
-    "bitcoinjs-lib": "6.0.1",
     "ecpair": "2.0.1",
     "expo": "~44.0.0",
     "expo-asset": "~8.4.4",

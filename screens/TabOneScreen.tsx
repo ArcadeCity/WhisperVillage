@@ -13,8 +13,10 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
   }, [])
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Video Test</Text>
-      <Video
+      <Text style={styles.title}>Send</Text>
+      <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
+      <Text style={{ marginBottom: 20 }}>Here imagine a list of potential recipients</Text>
+      {/* <Video
         ref={video}
         style={styles.video}
         source={{
@@ -32,7 +34,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
             status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
           }
         />
-      </View>
+      </View> */}
     </View>
   )
 }
@@ -43,10 +45,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
   },
   video: {
     alignSelf: 'center',

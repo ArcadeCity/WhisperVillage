@@ -1,6 +1,6 @@
 # Whisper Village
 
-Coordinating peer-to-peer support for Ukrainian refugees.
+Quiet Peer-to-Peer Donations
 
 [Satsby hackathon](https://www.thrillerbitcoin.com/satsx-hackathon-2022/) entry.
 
@@ -12,8 +12,7 @@ Coordinating peer-to-peer support for Ukrainian refugees.
 
 ## Features
 - Trust-building via user video testimonials and/or linking social accounts
-- Allow connection of Bitcoin wallet for peer-to-peer donations
-  - Using "stealth transactions" via @supertestnet's 'BIP47 minus determinism'?
+- Allow peer-to-peer Bitcoin donations via [nondeterministic stealth addresses](https://github.com/ArcadeCity/WhisperVillage/wiki/Nondeterministic-stealth-addresses-with-JavaScript-interpreters)
 
 ## Setup
 Use node v14

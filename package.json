@@ -26,6 +26,7 @@
     "ecpair": "2.0.1",
     "expo": "~44.0.0",
     "expo-asset": "~8.4.4",
+    "expo-av": "~10.2.0",
     "expo-cli": "^5.3.0",
     "expo-constants": "~13.0.0",
     "expo-font": "~10.0.4",

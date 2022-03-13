@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button, StyleSheet } from 'react-native'
 import { Video, AVPlaybackStatus } from 'expo-av'
 import { Text, View } from '../components/Themed'
-import { logWalkthrough } from '../lib/stealth'
+import { logWalkthrough } from '../lib/whisper'
 import { RootTabScreenProps } from '../types'
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {

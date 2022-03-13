@@ -37,6 +37,7 @@ export default function TabTwoScreen() {
       <View style={styles.separator} lightColor='#eee' darkColor='rgba(255,255,255,0.1)' />
 
       <SafeAreaView>
+        <Text style={styles.subtitle}>Private Key</Text>
         <TextInput
           style={styles.input}
           onChangeText={onChangePrivateKey}
@@ -49,12 +50,14 @@ export default function TabTwoScreen() {
           value={seedPhrase}
           placeholder='Seed Phrase'
         /> */}
+        <Text style={styles.subtitle}>Whisper Key</Text>
         <TextInput
           style={styles.input}
           onChangeText={onChangeWhisperKey}
           value={whisperKey}
           placeholder='Whisper Key'
         />
+        <Text style={styles.subtitle}>Withdraw Address (BTC)</Text>
         <TextInput
           style={styles.input}
           onChangeText={onChangeWithdrawAddress}
@@ -82,6 +85,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    marginTop: 4,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   separator: {

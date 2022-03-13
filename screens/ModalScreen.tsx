@@ -12,11 +12,22 @@ export default function ModalScreen() {
 
       <Pressable
         style={{ marginVertical: 20 }}
-        onPress={() => Linking.openURL('https://github.com/ArcadeCity/whispervillage')}
+        onPress={() => Linking.openURL('https://github.com/ArcadeCity/WhisperVillage')}
       >
         <Text>Code & explainer: </Text>
-
         <Text style={{ color: 'darkblue' }}>https://github.com/ArcadeCity/WhisperVillage</Text>
+      </Pressable>
+
+      <Pressable
+        style={{ marginVertical: 20 }}
+        onPress={() =>
+          Linking.openURL('https://github.com/ArcadeCity/WhisperVillage/wiki/Whisper-Addresses')
+        }
+      >
+        <Text>Whisper Address explainer: </Text>
+        <Text style={{ color: 'darkblue' }}>
+          https://github.com/ArcadeCity/WhisperVillage/wiki/Whisper-Addresses
+        </Text>
       </Pressable>
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}

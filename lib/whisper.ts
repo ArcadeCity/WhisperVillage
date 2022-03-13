@@ -22,7 +22,6 @@ export function deriveKeyFromMnemonic(mnemonic: string) {
 }
 
 export function getEphkey(path: number, indexnum: number = 0, backupwords: string) {
-  console.log('GETEPHKEY')
   if (getPrivkeyHex(backupwords, 0, indexnum).substring(0, 1) != '0') {
     let newindexnum = indexnum + 1
     return getEphkey(path, newindexnum, backupwords)
